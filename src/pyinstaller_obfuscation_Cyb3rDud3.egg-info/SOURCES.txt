@@ -2,10 +2,8 @@ README.md
 pyproject.toml
 setup.py
 src/pyinstaller_obfuscation/__init__.py
-src/pyinstaller_obfuscation/helpers/__init__.py
-src/pyinstaller_obfuscation/helpers/main.py
-src/pyinstaller_obfuscation/obfuscation/__init__.py
-src/pyinstaller_obfuscation/obfuscation/main.py
+src/pyinstaller_obfuscation/helpers.py
+src/pyinstaller_obfuscation/obfuscation.py
 src/pyinstaller_obfuscation_Cyb3rDud3.egg-info/PKG-INFO
 src/pyinstaller_obfuscation_Cyb3rDud3.egg-info/SOURCES.txt
 src/pyinstaller_obfuscation_Cyb3rDud3.egg-info/dependency_links.txt
