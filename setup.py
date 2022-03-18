@@ -4,9 +4,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="pyinstaller_obfuscation_Cyb3rDud3",
+    name="pyinstaller_obfuscation_Cyb3rDud3AndKupaRashit",
     version="0.0.1",
-    author="Cyb3rDud3",
+    author="Cyb3rDud3/KupaRashit",
     author_email="cyb3rguy1337@gmail.com",
     description="A Package to recompile and obfuscate the pyinstaller bootloader",
     long_description=long_description,
