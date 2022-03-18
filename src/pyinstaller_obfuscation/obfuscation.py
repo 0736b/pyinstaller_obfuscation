@@ -5,7 +5,7 @@ import re
 import sys
 from typing import List
 from pathlib2 import Path
-from helpers import Utils
+from pyinstaller_obfuscation.helpers import Utils
 
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT)
