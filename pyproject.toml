@@ -1,0 +1,3 @@
+[build-system]
+requires = ["pathlib2"]
+build-backend = "setuptools.build_meta"

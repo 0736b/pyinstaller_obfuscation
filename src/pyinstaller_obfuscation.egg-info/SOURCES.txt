@@ -1,0 +1,11 @@
+README.md
+pyproject.toml
+setup.py
+src/helpers/__init__.py
+src/helpers/main.py
+src/obfuscation/__init__.py
+src/obfuscation/main.py
+src/pyinstaller_obfuscation.egg-info/PKG-INFO
+src/pyinstaller_obfuscation.egg-info/SOURCES.txt
+src/pyinstaller_obfuscation.egg-info/dependency_links.txt
+src/pyinstaller_obfuscation.egg-info/top_level.txt
