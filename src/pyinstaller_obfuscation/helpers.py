@@ -24,7 +24,7 @@ class Utils:
         self.meipass_env = self.random_mark_string()
 
     def random_string(self) -> str:
-        return ''.join([random.choice(string.ascii_letters) for _ in range(random.randrange(6, 15))])
+        return ''.join([random.choice(string.ascii_letters) for _ in range(random.randrange(6, 20))])
 
     def random_mark_string(self) -> str:
         return ''.join([random.choice(string.ascii_letters) for _ in range(random.randrange(3, 10))] + ['_'] + [

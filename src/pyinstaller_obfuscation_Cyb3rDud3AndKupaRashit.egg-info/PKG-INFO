@@ -1,0 +1,27 @@
+Metadata-Version: 2.1
+Name: pyinstaller-obfuscation-Cyb3rDud3AndKupaRashit
+Version: 0.0.1
+Summary: A Package to recompile and obfuscate the pyinstaller bootloader
+Home-page: https://github.com/Cyb3rDud3/pyinstaller_obfuscation
+Author: Cyb3rDud3/KupaRashit
+Author-email: cyb3rguy1337@gmail.com
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/Cyb3rDud3/pyinstaller_obfuscation/issues
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: Microsoft :: Windows
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# pyinstaller_obfuscation
+AUTOMATIC obfuscation of pyinstaller bootloader to evade from AV'S
+please do not use for any bad things!
+
+this thing created for research only!
+INSPIRED BY https://arxiv.org/pdf/2105.00565.pdf
+
+feel free to contribute.
+
+

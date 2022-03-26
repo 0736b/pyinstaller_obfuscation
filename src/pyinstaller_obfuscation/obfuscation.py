@@ -70,6 +70,49 @@ class Obfuscate:
                               "to load tcl/tk libraries",
                               "to seek to cookie position!",
                               "to append to"}
+        self.__tcl_fingerprints = {"tcl_findLibrary",
+                             "tclInit",
+                             "exit",
+                             "rename ::source ::_source",
+                             "source",
+                             "tcl_patchLevel",
+                             "tk_patchLevel",
+                             "_image_data",
+                            "status_text",
+                                   "tk.tcl",
+                                   "tk_library",
+                                   "_source"}
+        self.__fingerprints = {#"calloc",
+                               #"win32_wcs_to_mbs",
+                               #"malloc",
+                               "WideCharToMultiByte",
+                               "win32_utils_to_utf8",
+                               "win32_utils_from_utf8",
+                               "GetModuleFileNameW",
+                              # "pkg",
+                              # "fread",
+                              # "fwrite",
+                             #  "fseek",
+                              # "fopen",
+                              # "ucrtbase.dll",
+                              # "LoadLibrary",
+                               }
+        self.__fingerprints_placements = {
+            'pyi_utils.c' : 'static int argc_pyi = 0;',
+            'pyi_win32_utils.c' : r'.*GetWinErrorString\(.*',
+            'pyi_splash.c' : 'static Tcl_Condition exit_wait;',
+            'pyi_pythonlib.c' : r'int\s+pyi_pylib_load.*',
+            'pyi_path.c' : r'bool\s+pyi_path_dirname.*',
+            'pyi_main.c' : r'int\s+pyi_main.*',
+            'pyi_launch.c' : '#define _MAX_ARCHIVE_POOL_LEN 20',
+            'pyi_global.c' : 'char *saved_locale;',
+            'pyi_exception_dialog.c' : '#pragma pack(push, 4)',
+            'pyi_archive.c' : 'int pyvers = 0;'
+
+        }
+        self.function_filenames = {'pyi_pythonlib.c','pyi_path.c','pyi_main.c','pyi_win32_utils.c'}
+
+        self.obfuscated_files = set()
 
 
     def tamper_magic(self):
@@ -166,6 +209,7 @@ class Obfuscate:
     def obfuscate_c_errors(self):
         return
 
+
     def replace_pyz(self):
         return
 
@@ -174,6 +218,50 @@ class Obfuscate:
 
     def replace_pkg(self):
         return
+
+
+    def obfuscate_splashlib(self,current_file_text,filename):
+        if 'splash' not in filename:
+            return current_file_text
+        for fingerprint in self.__tcl_fingerprints:
+            stack_string = "{" + ','.join(["'%s'" % i for i in fingerprint]) + "}"
+            fingerprinted = re.findall(rf'"{fingerprint}.*?(?<!\\)"', current_file_text)
+            char_name = self.utils.random_string()
+            lines = current_file_text.splitlines()
+            for line in lines:
+                if "static Tcl_Mutex status_mutex" in line:
+                    current_file_text = re.sub(line, f"{line}\nchar {char_name}[] = {stack_string};", current_file_text)
+                    break
+            for fingerprint_str in fingerprinted:
+                current_file_text = re.sub(fingerprint_str, char_name, current_file_text)
+        return current_file_text
+
+    def obfuscate_fingerprint(self, current_file_text,filename):
+        placement = self.__fingerprints_placements[filename]
+        for fingerprint in self.__fingerprints:
+            stack_string = "{" + ','.join(["'%s'" % i for i in fingerprint]) + "}"
+            fingerprinted = re.findall(rf'"{fingerprint}.*?(?<!\\)"', current_file_text)
+            if not fingerprinted:
+                continue
+            char_name = self.utils.random_string()
+            lines = current_file_text.splitlines()
+            print(filename)
+            if filename in self.function_filenames:
+                print(placement)
+                find_func = re.findall(placement,current_file_text)
+                if find_func:
+                    before = find_func[0]
+                    regex = re.compile(placement)
+                    current_file_text = re.sub(regex, f"char {char_name}[] = {stack_string};\n{before}\n", current_file_text)
+            else:
+                for line in lines:
+                    if placement in line or placement == line:
+                        current_file_text = re.sub(line, f"char {char_name}[] = {stack_string};\n{line}\n", current_file_text)
+                        break
+            for fingerprint_str in fingerprinted:
+                current_file_text = re.sub(fingerprint_str, char_name, current_file_text)
+        self.obfuscated_files.add(filename)
+        return current_file_text
 
     def replace_pyinstaller_upper(self):
         return
@@ -235,6 +323,15 @@ class Obfuscate:
         os.chdir(self.base_dir)  # just to make sure
         for file in os.listdir(self.bootloader_src_dir):
             if file.endswith('.c') or file.endswith('.h'):
+                try:
+                    current_file = Path(os.path.join(self.bootloader_src_dir, file))
+                    current_text = current_file.read_text()
+                    current_text = self.obfuscate_splashlib(current_text, file)
+                    current_file.write_text(current_text)
+                    current_text = self.obfuscate_fingerprint(current_text, file)
+                    current_file.write_text(current_text)
+                except Exception as e:
+                    logger.info(e)
                 os.rename(os.path.join(self.bootloader_src_dir, file),
                           os.path.join(self.bootloader_src_dir, self.utils.fileNames[file]))
                 current_file = Path(os.path.join(self.bootloader_src_dir, self.utils.fileNames[file]))
@@ -272,6 +369,7 @@ class Obfuscate:
                             current_text = current_text.replace(originalFilename, newFilename)
                         for prev_str, new_str in self.utils.stringDictionary.items():
                             current_text = current_text.replace(prev_str, new_str)
+
                         current_text = re.sub(r"^PyInstaller\b$", self.utils.pyinstaller_new,
                                               current_text)  # don't replace dirs!
                         current_text = re.sub(r"^pyinstaller\b$", self.utils.py_installer_lower_new, current_text)
